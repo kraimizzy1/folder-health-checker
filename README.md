@@ -82,6 +82,8 @@ py -3 -m unittest discover -s tests -v
 
 ## 版权与组件声明
 
-本仓库自身代码采用 [MIT License](LICENSE)，Copyright (c) 2026 kraimizzy1。
+## Third-party components
 
-当前项目没有必需的第三方 Python 依赖。`ffprobe` 只是可选的外部工具，本项目不打包也不分发它；将来如果使用或引用第三方代码/工具，会遵循其各自的授权条款。
+Any third-party tools or components used with this project remain subject to their own licenses and terms.
+
+`ffprobe` is optional and is not bundled with this project.
