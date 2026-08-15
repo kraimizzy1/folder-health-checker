@@ -23,6 +23,13 @@ IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp"}
 TWO_YEARS_SECONDS = 365.2425 * 2 * 24 * 3600
 
 
+def application_dir() -> Path:
+    """Return the folder that should receive reports in source and EXE builds."""
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).resolve().parent
+    return Path(__file__).resolve().parent
+
+
 def human_size(value: int) -> str:
     units = ("B", "KB", "MB", "GB", "TB", "PB")
     number = float(value)
@@ -272,9 +279,19 @@ function sortTable(th){const t=th.closest("table"),b=t.tBodies[0],i=[...th.paren
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="只读扫描文件夹并生成中文体检报告")
-    parser.add_argument("folder", help="要扫描的文件夹")
-    parser.add_argument("--reports", default=str(Path(__file__).parent / "reports"), help="报告输出目录")
+    parser.add_argument("folder", nargs="?", help="要扫描的文件夹（也可把文件夹拖到 EXE 上）")
+    parser.add_argument("--reports", default=str(application_dir() / "reports"), help="报告输出目录")
     args = parser.parse_args(argv)
+    interactive = args.folder is None and sys.stdin.isatty()
+    if args.folder is None:
+        if interactive:
+            try:
+                args.folder = input("请输入要扫描的文件夹路径: ").strip().strip('"')
+            except (EOFError, KeyboardInterrupt):
+                print("未输入文件夹路径。", file=sys.stderr)
+                return 2
+        else:
+            parser.error("需要提供要扫描的文件夹")
     try:
         result = scan_folder(Path(args.folder))
         html_path, csv_path = write_reports(result, Path(args.reports))
@@ -284,6 +301,11 @@ def main(argv: list[str] | None = None) -> int:
     print(f"扫描完成：{result.file_count} 个文件，{result.folder_count} 个文件夹，{len(result.errors)} 个错误")
     print(f"HTML：{html_path}")
     print(f"CSV ：{csv_path}")
+    if interactive and getattr(sys, "frozen", False):
+        try:
+            input("按 Enter 关闭窗口...")
+        except (EOFError, KeyboardInterrupt):
+            pass
     return 0
 
 

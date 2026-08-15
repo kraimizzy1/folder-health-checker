@@ -1,69 +1,32 @@
-# Folder Health Checker
+# Folder Health Checker / 文件夹体检器
 
-[简体中文](README.zh-CN.md)
+A small Windows tool I made for getting a clearer picture of a large, messy folder before sorting it by hand. It scans only the folder you choose and writes an HTML and CSV report; it does not delete, move, rename, or upload your files.
 
-A small, read-only Windows folder analyzer that helps you understand what is taking up space without deleting or modifying anything.
+## Use it
 
-It scans only the folder you explicitly choose, works offline, and generates local HTML and CSV reports.
+### Windows EXE (no Python needed)
 
-## Features
+Download `FolderHealthChecker-v0.2.0-windows-x64.exe`, then either drag a folder onto it or double-click it and paste a folder path. The reports are saved beside the EXE in `reports`.
 
-- Total file count, folder count, and size
-- Storage usage grouped by file extension
-- 50 largest files
-- Duplicate detection using size pre-filtering plus full SHA-256 verification
-- Files not modified for roughly two years
-- Empty folders
-- PNG, JPEG, GIF, and BMP dimensions using only the Python standard library
-- Optional video metadata (duration, resolution, codec) when `ffprobe` is already installed
-- Scan errors are recorded in the report instead of aborting the entire scan
-- Sortable HTML tables and CSV output
+### From source
 
-## Safety and privacy
-
-Folder Health Checker is intentionally conservative:
-
-- Read-only: it does not delete, move, rename, or modify scanned files
-- Offline: it does not make network requests
-- Scope-limited: it scans only the folder you explicitly select
-- Symbolic links are skipped to avoid unintentionally traversing outside the selected folder
-- Reports are written only to the project's local `reports` directory
-
-Reports contain full file paths, sizes, timestamps, and SHA-256 hashes for detected duplicates. Review reports before sharing them publicly.
-
-## Requirements
-
-- Windows 10 or Windows 11
-- Python 3.10+
-- Optional: `ffprobe` for video metadata
-
-There are no required third-party Python packages.
-
-## Quick start
-
-### Option 1: drag and drop
-
-Drag the folder you want to inspect onto `run.bat`.
-
-### Option 2: double-click
-
-Double-click `run.bat`, paste a folder path, and press Enter.
-
-### Option 3: command line
+Python 3.10+ is required. Drag a folder onto `run.bat`, or run:
 
 ```text
-py -3 folder_health_checker.py "D:\Folder\To\Inspect"
+py -3 folder_health_checker.py "D:\folder-to-check"
 ```
 
-When the scan finishes, open:
+Reports are written to `reports/report.html` and `reports/report.csv`. A new scan replaces the previous pair of reports.
 
-```text
-reports\report.html
-```
+## What is in the report
 
-or use `reports\report.csv` with Excel or another spreadsheet tool.
+- File and folder counts, total size, extension breakdown, and the 50 largest files
+- Exact duplicate groups (full SHA-256), old files, and empty folders
+- Basic PNG/JPEG/GIF/BMP dimensions
+- Video metadata when `ffprobe` is already installed
+- Items that could not be read during the scan
 
-Each normal run overwrites the previous `report.html` and `report.csv` inside this project. It never writes into the scanned folder.
+The report contains full file paths and metadata, so check it before sharing it.
 
 ## Tests
 
@@ -71,31 +34,54 @@ Each normal run overwrites the previous `report.html` and `report.csv` inside th
 py -3 -m unittest discover -s tests -v
 ```
 
-The test suite creates its own temporary data under `work/` and cleans it up afterward.
+`create_example.py` makes sample data only under `work/example_data` and writes example reports under `reports`.
 
-## Create sample data locally
+## Copyright and components / 版权与组件
+
+The code in this repository is released under the [MIT License](LICENSE). Copyright (c) 2026 kraimizzy1.
+
+This project currently has no required third-party Python dependencies. `ffprobe` is an optional external tool: it is not bundled or distributed with this project. If third-party code or tools are used in the future, their own license terms will apply.
+
+---
+
+这是我为整理大而杂的文件夹写的小工具。它只扫描你选择的文件夹，并生成 HTML 和 CSV 报告；不会删除、移动、重命名、上传其中的文件。
+
+## 怎么用
+
+### Windows EXE（不需要安装 Python）
+
+下载 `FolderHealthChecker-v0.2.0-windows-x64.exe` 后，把文件夹拖到 EXE 上；也可以双击 EXE，再粘贴要扫描的路径。报告会保存在 EXE 同级的 `reports` 文件夹里。
+
+### 源码运行
+
+需要 Python 3.10+。把文件夹拖到 `run.bat` 上，或运行：
 
 ```text
-py -3 create_example.py
+py -3 folder_health_checker.py "D:\要检查的文件夹"
 ```
 
-This creates synthetic files under `work/example_data` and generates local example reports. Both `work/` and `reports/` are ignored by Git so local paths are not accidentally committed.
+报告会写入 `reports/report.html` 和 `reports/report.csv`。每次扫描会覆盖上一份报告，不会改动被扫描目录。
 
-## Known limitations
+## 报告会告诉你
 
-- Very large folders can take time because duplicate candidates require full-file SHA-256 reads.
-- Files blocked by permissions, exclusive locks, or Windows path policies may not be readable; those failures are reported instead of crashing the scan.
-- Windows junction/reparse-point behavior has not yet been broadly tested across different storage and cloud-sync setups. Symbolic links are explicitly skipped.
-- Video metadata is skipped when `ffprobe` is unavailable.
+- 文件数、文件夹数、总大小、扩展名统计和最大的 50 个文件
+- 完整 SHA-256 确认的重复文件、旧文件和空文件夹
+- PNG/JPEG/GIF/BMP 图片尺寸
+- 系统已安装 `ffprobe` 时的视频信息
+- 扫描中读不到的文件或文件夹
 
-## Project structure
+报告含有完整路径和文件元数据，分享前请先确认其中没有敏感信息。
 
-- `folder_health_checker.py` — scanner and report generator
-- `run.bat` — Windows launcher
-- `tests/` — automated tests
-- `create_example.py` — creates synthetic local sample data
-- `requirements.txt` — dependency note
+## 测试
 
-## License
+```text
+py -3 -m unittest discover -s tests -v
+```
 
-MIT License. See [LICENSE](LICENSE).
+`create_example.py` 只会在 `work/example_data` 创建模拟数据，并把示例报告写入 `reports`。
+
+## 版权与组件声明
+
+本仓库自身代码采用 [MIT License](LICENSE)，Copyright (c) 2026 kraimizzy1。
+
+当前项目没有必需的第三方 Python 依赖。`ffprobe` 只是可选的外部工具，本项目不打包也不分发它；将来如果使用或引用第三方代码/工具，会遵循其各自的授权条款。
