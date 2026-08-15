@@ -2,13 +2,16 @@
 import os
 import shutil
 import struct
+import sys
 import time
 from pathlib import Path
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT_ROOT / "src"))
+
 from folder_health_checker import scan_folder, write_reports
 
-BASE = Path(__file__).parent
-SAMPLE = BASE / "work" / "example_data"
+SAMPLE = PROJECT_ROOT / "work" / "example_data"
 
 
 def create_sample() -> None:
@@ -31,6 +34,6 @@ def create_sample() -> None:
 
 if __name__ == "__main__":
     create_sample()
-    html_path, csv_path = write_reports(scan_folder(SAMPLE), BASE / "reports", "example_report")
+    html_path, csv_path = write_reports(scan_folder(SAMPLE), PROJECT_ROOT / "reports", "example_report")
     print(f"已生成：{html_path}")
     print(f"已生成：{csv_path}")

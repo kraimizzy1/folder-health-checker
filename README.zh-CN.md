@@ -50,7 +50,7 @@
 ### 方法三：命令行
 
 ```text
-py -3 folder_health_checker.py "D:\要检查的文件夹"
+py -3 src\folder_health_checker.py "D:\要检查的文件夹"
 ```
 
 扫描完成后，在项目的 `reports` 文件夹中打开 `report.html`，也可以用 Excel 等工具打开 `report.csv`。
@@ -68,7 +68,7 @@ py -3 -m unittest discover -s tests -v
 ## 本地生成模拟数据
 
 ```text
-py -3 create_example.py
+py -3 scripts\create_example.py
 ```
 
 它只会在 `work/example_data` 创建模拟文件，并在 `reports/` 生成示例报告。`work/` 和 `reports/` 都已被 Git 忽略，避免本机完整路径被意外提交。
@@ -82,11 +82,10 @@ py -3 create_example.py
 
 ## 项目文件
 
-- `folder_health_checker.py`：扫描及报告生成程序
+- `src/folder_health_checker.py`：扫描及报告生成程序
 - `run.bat`：Windows 启动入口
 - `tests/`：自动化测试
-- `create_example.py`：模拟数据与示例报告生成器
-- `requirements.txt`：依赖说明
+- `scripts/`：EXE 构建脚本与模拟数据生成器
 
 ## License
 

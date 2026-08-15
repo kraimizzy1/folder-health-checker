@@ -13,9 +13,9 @@ if not defined TARGET (
 )
 where py >nul 2>nul
 if %errorlevel%==0 (
-  py -3 "%~dp0folder_health_checker.py" "%TARGET%"
+  py -3 "%~dp0src\folder_health_checker.py" "%TARGET%"
 ) else (
-  python "%~dp0folder_health_checker.py" "%TARGET%"
+  python "%~dp0src\folder_health_checker.py" "%TARGET%"
 )
 set "RESULT=%errorlevel%"
 echo.

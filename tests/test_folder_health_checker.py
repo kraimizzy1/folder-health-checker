@@ -1,10 +1,14 @@
 import os
 import struct
+import sys
 import tempfile
 import time
 import unittest
 from pathlib import Path
 from unittest.mock import patch
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
 from folder_health_checker import image_dimensions, scan_folder, write_reports
 
